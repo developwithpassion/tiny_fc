@@ -3,6 +3,7 @@ source "https://rubygems.org"
 gem 'bundler', '>= 0.9.26'
 gem 'initializer', github: 'developwithpassion/initializer'
 gem 'single', github: 'developwithpassion/single'
+gem 'settings', github: 'developwithpassion/settings'
 
 
 group :development do
