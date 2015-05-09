@@ -2,6 +2,11 @@ require_relative 'init'
 require 'fakes-rspec'
 require_relative 'require_util'
 
+module Features
+  module Testing
+  end
+end
+
 class FakeRequest
   attr_reader :request
 
@@ -47,7 +52,6 @@ end
 
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
-Require.non_spec_files.in("support/vcr")
-Require.non_spec_files.in("support")
+Require.non_spec_files.in("features")
 Require.only_specs.in("lib")
 Require.only_specs.in("v1")

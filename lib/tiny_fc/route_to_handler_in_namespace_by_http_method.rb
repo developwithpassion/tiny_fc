@@ -5,6 +5,8 @@ module TinyFC
     include ::Settings
     include ::Settings::Factory
 
+    HANDLER_FILE_NAME = 'handler.rb'
+
     initializer :path_prefix, :root_namespace
 
     def namespaces(path)
@@ -21,14 +23,12 @@ module TinyFC
     end
 
     def handles?(app)
-      path = app.request.path_info
       file = file_path(app)
-      return handler_cached?(path) | initialize_handler(path, file)
+      return handler_cached?(file) | initialize_handler(file)
     end
 
     def process(app)
-      path = app.request.path_info
-      handler = handler(path)
+      handler = handler(file_path(app))
       handler.process(app)
     end
 
@@ -37,7 +37,8 @@ module TinyFC
       klass = namespace_parts.inject(root_namespace) do |current_root, ns|
         current_root.const_get(ns)
       end
-      target = klass.is_a?(Class) ? klass : klass.const_get(namespace_parts.last.to_sym)
+
+      klass
     end
 
     def path_without_leading_slash(path)
@@ -49,18 +50,22 @@ module TinyFC
       method = app.request.request_method
       full_path = File.join(path, method.to_s)
       request_path = path_without_leading_slash(full_path)
-      request_path = File.join(request_path, 'handler.rb')
+      request_path = File.join(request_path, HANDLER_FILE_NAME)
 
       File.join(path_prefix, request_path)
     end
 
-    def initialize_handler(path, file)
+    def initialize_handler(file)
       return false unless File.exist?(file)
 
+      dirname = File.dirname(file)
+      handler_name = File.basename(file, File.extname(file))
+      full_name = File.join(dirname, handler_name)
+
       load file
-      klass = get_class_at_path(path_without_leading_slash(path))
+      klass = get_class_at_path(path_without_leading_slash(full_name))
       instance = create_klass(klass)
-      register_handler(path, instance)
+      register_handler(file, instance)
 
       true
     end

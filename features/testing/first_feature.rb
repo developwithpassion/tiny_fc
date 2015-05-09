@@ -1,6 +1,6 @@
 module Features
   module Testing
-    module SecondFeature
+    module FirstFeature
 
     end
   end

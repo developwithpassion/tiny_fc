@@ -1,7 +1,9 @@
 module Features::Testing::SecondFeature
-  class SecondFeature
-    def process(request)
-      return self
+  module Get
+    class Handler
+      def process(request)
+        return self
+      end
     end
   end
 end
