@@ -1,12 +1,15 @@
 module TinyFC
   describe RequestGateway do
+    let(:request_handlers) { [] }
+
+    before (:each) do
+      subject.request_handlers = request_handlers
+    end
+
     context 'when handling a request' do
-      include TestSettings
-
-      configure_settings RequestGateway
-
       let(:handler) { fake }
       let(:request) { FakeRequest.new }
+
 
       before (:each) do
         request_handlers.stub(:get_handler_that_handles).with(request).and_return(handler)
@@ -22,10 +25,6 @@ module TinyFC
     end
 
     context 'when forwarding a request to a new path' do
-      include TestSettings
-
-      configure_settings RequestGateway
-
       let(:handler) { fake }
       let(:request) { FakeRequest.new }
 

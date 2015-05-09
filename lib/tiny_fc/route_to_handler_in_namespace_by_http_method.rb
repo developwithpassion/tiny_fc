@@ -1,5 +1,5 @@
 module TinyFC
-  class RouteToHandlerInNamespace
+  class RouteToHandlerInNamespaceByHttpMethod
     include HandlerCache
     include Initializer
     include ::Settings
@@ -22,7 +22,7 @@ module TinyFC
 
     def handles?(app)
       path = app.request.path_info
-      file = file_path(path)
+      file = file_path(app)
       return handler_cached?(path) | initialize_handler(path, file)
     end
 
@@ -44,10 +44,14 @@ module TinyFC
       return path.gsub(/^\//, "" )
     end
 
-    def file_path(request_path)
-      request_path = path_without_leading_slash(request_path)
+    def file_path(app)
+      path = app.request.path_info
+      method = app.request.request_method
+      full_path = File.join(path, method.to_s)
+      request_path = path_without_leading_slash(full_path)
+      request_path = File.join(request_path, 'handler.rb')
 
-      File.join(path_prefix, "#{request_path}.rb")
+      File.join(path_prefix, request_path)
     end
 
     def initialize_handler(path, file)

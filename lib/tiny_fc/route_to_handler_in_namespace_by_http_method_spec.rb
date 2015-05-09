@@ -1,10 +1,22 @@
 module TinyFC
-  describe RouteToHandlerInNamespace do
-    subject { RouteToHandlerInNamespace.new('features', ::Features) }
+  describe RouteToHandlerInNamespaceByHttpMethod do
+    subject { RouteToHandlerInNamespaceByHttpMethod.new('features', ::Features) }
+
+    context 'when getting the file path from an incoming request' do
+      let(:request) { FakeRequest.new("/first/second/third", :get) }
+
+      before (:each) do
+        @result = subject.file_path(request)
+      end
+
+      it 'combines the path info with the http method' do
+        expect(@result).to eql('features/first/second/third/get/handler.rb')
+      end
+    end
 
     context 'when determining if it can handle a request' do
       context 'and the request path matches a path in the server with a prefix of /' do
-        let(:request) { FakeRequest.new("/testing/first_feature") }
+        let(:request) { FakeRequest.new("/testing/first_feature", :get) }
 
         before (:each) do
           @result = subject.handles?(request)
@@ -15,7 +27,7 @@ module TinyFC
         end
       end
       context 'and the request path matches a path in the server' do
-        let(:request) { FakeRequest.new("testing/first_feature") }
+        let(:request) { FakeRequest.new("testing/first_feature", :get) }
         
         before (:each) do
           @result = subject.handles?(request)
@@ -27,7 +39,7 @@ module TinyFC
       end
 
       context 'and the request path does not match a path in the server' do
-        let(:request) { FakeRequest.new("testing/none") }
+        let(:request) { FakeRequest.new("testing/none", :get) }
 
         before (:each) do
           @result = subject.handles?(request)

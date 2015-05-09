@@ -1,5 +1,7 @@
 module TinyFC
   describe RootHandler do
+    let(:subject) { RootHandler.new(:unimportant) }
+
     context 'when determining if it handles a request' do
       it 'only handles root requests' do
         expect(subject.handles?(FakeRequest.new('/'))).to be_true
@@ -8,11 +10,11 @@ module TinyFC
     end
 
     context 'when processing a request' do
-      let(:request) { FakeRequest.new }
+      let(:request) { FakeRequest.new('/') }
       let(:request_gateway) { fake }
 
       subject {
-        instance = RootHandler.new
+        instance = RootHandler.new('/index')
         instance.request_gateway = request_gateway
         instance
       }
