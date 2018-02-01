@@ -7,7 +7,6 @@ gem 'settings', github: 'developwithpassion/settings'
 
 
 group :development do
- gem 'yard', '~> 0.8.7.4'
  gem 'thor', '>= 0.19.1'
  gem 'travis', '>= 1.6.14'
  gem 'travis-lint'
