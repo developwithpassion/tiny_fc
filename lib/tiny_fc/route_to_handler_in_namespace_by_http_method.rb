@@ -24,7 +24,7 @@ module TinyFC
 
     def handles?(app)
       file = file_path(app)
-      return handler_cached?(file) | initialize_handler(file)
+      handler_cached?(file) || initialize_handler(file)
     end
 
     def process(app)
@@ -47,12 +47,13 @@ module TinyFC
 
     def file_path(app)
       path = app.request.path_info
-      method = app.request.request_method
+      method = app.request.request_method.downcase
       full_path = File.join(path, method.to_s)
       request_path = path_without_leading_slash(full_path)
       request_path = File.join(request_path, HANDLER_FILE_NAME)
 
-      File.join(path_prefix, request_path)
+      file = File.join(path_prefix, request_path)
+      path_without_leading_slash(file)
     end
 
     def initialize_handler(file)
@@ -61,8 +62,10 @@ module TinyFC
       dirname = File.dirname(file)
       handler_name = File.basename(file, File.extname(file))
       full_name = File.join(dirname, handler_name)
+      expanded_name = File.expand_path(full_name)
 
-      load file
+      # load file
+      require expanded_name
       klass = get_class_at_path(path_without_leading_slash(full_name))
       instance = create_klass(klass)
       register_handler(file, instance)

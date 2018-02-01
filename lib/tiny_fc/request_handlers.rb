@@ -11,6 +11,16 @@ module TinyFC
     end
   end
 
+  class MissingHandler
+    include Initializer
+
+    initializer :request
+
+    def process(env)
+      raise NoHandlerForRoute.new(request)
+    end
+  end
+
   class RequestHandlers
     include Initializer
     include Single
@@ -18,9 +28,7 @@ module TinyFC
     initializer r(:all_handlers, [])
 
     def get_handler_that_handles(request)
-      missing = -> do
-        raise NoHandlerForRoute.new(request)
-      end
+      missing = -> { MissingHandler.new(request) }
 
       result = all_handlers.find(missing) do |handler|
         handler.handles?(request)
