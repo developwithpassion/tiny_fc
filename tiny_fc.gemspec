@@ -12,7 +12,6 @@ Gem::Specification.new do |s|
   s.homepage    = "http://www.developwithpassion.com"
   s.summary     = %q{Basic front controller lib}
   s.description = %q{Simple fc library}
-  s.rubyforge_project = "tiny_fc"
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
